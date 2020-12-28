@@ -3,7 +3,6 @@ title: mongodb使用
 date: 2017-08-04 15:35:12
 tags: ["nodejs", "mongodb"]
 categories: ["记录"]
-draft: true
 ---
 
 > 记录了mongodb安装、配置和基本的使用
