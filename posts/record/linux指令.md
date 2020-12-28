@@ -33,6 +33,8 @@ vim 命令：
 
 * du -ah : 查看所有文件的大小
 
+* du -h --max-depth=1： 查看当前文件夹的大小，深度为 1
+
 * ps -ef|grep xxx : 查看 xxx 的进程
 
 * top -H -p {pid}: 查看某进程下的线程数
@@ -84,6 +86,7 @@ vim 命令：
 free -m // 查看内存信息
 df -h // 查看硬盘信息
 top // 查看内存使用情况
+dmidecode | more // 查看系统硬件配置信息
 
 // 下面的解析，来自(https://www.cnblogs.com/ggjucheng/archive/2012/01/08/2316399.html)
 
@@ -146,6 +149,15 @@ z    Flags   任务标志，参考 sched.h
 
 
 
+### 修改防火墙端口
+
+```
+vi /etc/sysconfig/iptables
+service iptables restart
+```
+
+
+
 
 
 ## centos
@@ -157,6 +169,8 @@ z    Flags   任务标志，参考 sched.h
 `service nginx start` 就能开启服务，不用带路径那样输入命令开启服务
 
 ## nginx 配置
+
+yum install nginx
 
 `yum` 安装的 `nginx` 在 `etc/nginx`
 
@@ -187,6 +201,12 @@ z    Flags   任务标志，参考 sched.h
 使用指定版本：`nvm use v6.9.4`
 
 设置默认版本：`nvm alias default v4.6.0`
+
+#### 安装 443 问题
+
+add '199.232.68.133 raw.githubusercontent.com' to /etc/hosts
+
+
 
 ## 安装node包
 
@@ -246,25 +266,3 @@ https://repo.mongodb.org/yum/redhat/$releasever/mongodb-org/3.4/x86_64/
 
 
 
-## mysql 安装
-
-echo "================================================================="
-
-echo "开始安装mysql"
-echo "================================================================="
-
-echo "================================= 添加MySql的yum reposity ================================"
-wget http://dev.mysql.com/get/mysql57-community-release-el7-7.noarch.rpm
-yum localinstall mysql57-community-release-el7-7.noarch.rpm
-
-echo "================================= 查看yum reposity是否安装成功 ================================"
-yum repolist enabled | grep "mysql.*-community.*"
-
-echo "================================= 安装mysql ================================"
-yum install mysql-community-server
-
-echo "================================= 安装的mysql版本 ================================"
-mysql --version
-
-echo "================================= MySql的初始密码是 ================================"
-cat /var/log/mysqld.log | grep password

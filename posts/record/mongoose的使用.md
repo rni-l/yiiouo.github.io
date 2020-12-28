@@ -61,7 +61,7 @@ draft: true
 
 5.x.x 版本
 
-```
+```javascript
 const mongoose = require('mongoose')
 
 const db = mongoose.connect('mongodb://localhost/koa')

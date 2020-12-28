@@ -21,6 +21,34 @@ draft: true
 
 
 
+### 设置源
+
+```shell
+npm set registry https://registry.npm.taobao.org # 注册模块镜像
+npm set disturl https://npm.taobao.org/dist # node-gyp 编译依赖的 node 源码镜像
+
+# 设置 npm 源
+npm set registry https://registry.npmjs.org
+npm set registry http://47.107.21.127:4873
+npm set registry http://10.10.5.63:4873
+
+## 以下选择添加
+npm set sass_binary_site https://npm.taobao.org/mirrors/node-sass # node-sass 二进制包镜像
+npm set electron_mirror https://npm.taobao.org/mirrors/electron/ # electron 二进制包镜像
+npm set puppeteer_download_host https://npm.taobao.org/mirrors # puppeteer 二进制包镜像
+npm set chromedriver_cdnurl https://npm.taobao.org/mirrors/chromedriver # chromedriver 二进制包镜像
+npm set operadriver_cdnurl https://npm.taobao.org/mirrors/operadriver # operadriver 二进制包镜像
+npm set phantomjs_cdnurl https://npm.taobao.org/mirrors/phantomjs # phantomjs 二进制包镜像
+npm set selenium_cdnurl https://npm.taobao.org/mirrors/selenium # selenium 二进制包镜像
+npm set node_inspector_cdnurl https://npm.taobao.org/mirrors/node-inspector # node-inspector 二进制包镜像
+
+npm cache clean --force # 清空缓存
+```
+
+
+
+
+
 1. [npm 教程](<https://juejin.im/post/5ab3f77df265da2392364341#heading-9>)
 
 ### 区别 dependencies、devDependencies
@@ -44,28 +72,9 @@ draft: true
 
 
 
-## 使用express
+## 搭建私有 npm
 
-cnpm i express --save
+安装包：npm install -g verdaccio --unsafe-perm
 
-新建`index.js`文件
-
-    var express = require('express')
-    var app = express()
-    
-    app.get('/', function(req, res) {
-      res.send('hello, 11')
-    })
-    
-    app.listen(3000)
-
-开启服务：`node indexjs`
-
-## supervisor
-
-安装在全局下：`npm install -g supervisor`
-
-启动程序：`supervisor --harmony index`
-
-这个包的作用，当你更改后，刷新网页会更新，而不用重新开启服务才刷新
+启动：verdaccio
 

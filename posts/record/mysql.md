@@ -1,5 +1,6 @@
 ---
-title: mysql
+
+https://www.swiper.com.cn/title: mysql
 date: 2018-09-11 10:26:00
 tags: ["mysql"]
 categories: ["记录"]
@@ -383,6 +384,12 @@ async test() {
 
 
 
+### 类型
+
+
+
+
+
 ## 备份数据库
 
 ```shell
@@ -437,3 +444,65 @@ mysql -uroot -p xiaoman < /Users/apple/D/document/test2.sql
 
 1. 使用如果是查询某条数据，使用 limit 1。这样到数据库找到某条数据后就回停止查询，不再继续查。
 2. char 用于定长，varchar 用于可变长，这样效率会更好
+
+
+
+## mysql 安装
+
+echo "================================================================="
+
+echo "开始安装mysql"
+echo "================================================================="
+
+echo "================================= 添加MySql的yum reposity ================================"
+wget http://dev.mysql.com/get/mysql57-community-release-el7-7.noarch.rpm
+yum localinstall mysql57-community-release-el7-7.noarch.rpm
+
+echo "================================= 查看yum reposity是否安装成功 ================================"
+yum repolist enabled | grep "mysql.*-community.*"
+
+echo "================================= 安装mysql ================================"
+yum install mysql-community-server
+
+echo "================================= 安装的mysql版本 ================================"
+mysql --version
+
+
+
+#### mysql 初始化
+
+```shell
+chown mysql:mysql -R /var/lib/mysql
+mysqld --initialize
+systemctl start mysqld 
+```
+
+
+
+1. 如果启动时报错
+2. \#(删除/var/lib/mysql下的所有文件)mysql 数据文件路径
+3. \#(删除锁定文件)
+
+```shell
+rm -fr /var/lib/mysql/* 
+rm /var/lock/subsys/mysqld
+```
+
+
+
+#### 启动mysql
+
+```shell
+systemctl start mysqld 
+```
+
+
+
+echo "================================= MySql的初始密码是 ================================"
+
+cat /var/log/mysqld.log | grep password  # 获取初始密码 
+
+alter user root@localhost identified by 'Admin@123456';
+update user set host = '%' where user ='root';
+FLUSH PRIVILEGES;
+

@@ -65,10 +65,26 @@ const a = new Animal()
 
 这个 `new` 的操作会大概会是以下几个步骤：
 
-1. 生成一个对象
-2. 将 `Animal` 构造函数的作用域赋给对象（ `this` 指向新对象）
-3. 将对象的 `__proto__` 指向构造函数的 `prototype`
-4. 返回该对象的 `this`
+1. 生成一个空对象
+2. 将对象的 `__proto__` 指向构造函数的 `prototype`
+3. 将 `Animal` 构造函数的作用域赋给对象（ `this` 指向新对象）
+4. 让 `this` 指向这个对象
+5. 执行函数
+6. 判断函数返回值的类型，如果是基础类型的，就返回对象
+7. 如果是引用类型，就返回“函数的返回值”
+
+mock new 操作符
+
+```javascript
+function mockNew(func, ...args) {
+  let obj = Object.create(func.prototype)
+  obj1 = func.apply(obj, ...args)
+  return obj1 instanceof Object ? obj1 : obj
+}
+
+```
+
+
 
 
 
@@ -384,7 +400,48 @@ console.log(cat.hasOwnProperty('b')) // false
 
 每个实例对象，都有一个属性（__proto__) 指向实例的原型对象（prototype），而 prototype 也有自己的原型对象，__proto__ 指向它的原型对象，直到 Object 为止。而 Object 的原型对象指向的是 null。
 
-原型对象之间的连接就是原型链
+原型对象之间的连接，构成原型链
+
+
+
+### instanceof 
+
+**`instanceof`** **运算符**用于检测构造函数的 `prototype` 属性是否出现在某个实例对象的原型链上
+
+```javascript
+function test() {}
+
+const t1 = new test()
+
+function test2() {}
+
+console.log(t1 instanceof test) // true
+console.log(t1 instanceof test2) // false
+console.log(t1 instanceof Object) // true
+
+```
+
+自行实现：
+
+```javascript
+function new_instance_of(leftVaule, rightVaule) { 
+    let rightProto = rightVaule.prototype; // 取右表达式的 prototype 值
+    leftVaule = leftVaule.__proto__; // 取左表达式的__proto__值
+    while (true) {
+    	if (leftVaule === null) {
+            return false;	
+        }
+        if (leftVaule === rightProto) {
+            return true;	
+        } 
+        leftVaule = leftVaule.__proto__ 
+    }
+}
+```
+
+具体原理，就是沿着左边对象的 \_\_proto\_\_ 属性，向上一层层寻找，知道找到与右边对象的 prototype 值一样的
+
+
 
 ### 如何实现继承？
 
@@ -423,5 +480,5 @@ Es6 的 Class 只不过是基于原型的语法糖
 缺点：
 
 1. 它还是通过 prototype 去实现而已，当修改父类的某个方法时，子类还是会收到影响
-2. 无法定义原型上的属性，语法只支持定义方法。如果要定义原型上的属性，只能显示地在 prototype 上添加
+2. 无法定义原型上的属性，语法只支持定义方法。如果要定义原型上的属性，只能显式地在 prototype 上添加
 3. 
