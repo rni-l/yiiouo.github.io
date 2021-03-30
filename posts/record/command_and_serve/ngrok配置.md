@@ -3,6 +3,7 @@ title: ngrok配置
 date: 2018-10-08 09:00:00
 tags: ["linux", "ngrok"]
 categories: ["记录"]
+draft: true
 ---
 ### 服务端配置
 

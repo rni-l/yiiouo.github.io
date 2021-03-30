@@ -3,6 +3,7 @@ title: node-canvas的安装和使用
 date: 2017-09-13 15:26:51
 tags: ["nodejs", "canvas"]
 categories: ["记录"]
+draft: true
 ---
 
 ## 关键词

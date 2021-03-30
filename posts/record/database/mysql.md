@@ -4,6 +4,7 @@ https://www.swiper.com.cn/title: mysql
 date: 2018-09-11 10:26:00
 tags: ["mysql"]
 categories: ["记录"]
+draft: true
 ---
 
 # Mysql
@@ -375,12 +376,88 @@ async test() {
 
 * concat: 连接字符串，新建一个新字段
 * Trim,LTrim,RTrim: 去除空格
+* Length: 返回串的长度
+* Lower, Upper: 转换大小写
 * 聚集函数
   * AVG: 返回某列的平均值
   * COUNT: 行数
   * MAX: 最大值
   * MIN: 最小值
   * SUM: 总和
+
+
+
+### 子查询
+
+select 语句中的子查询，是从内向外
+
+```mysql
+select * from orders where orderNum in (select orderNum from orderitems);
+```
+
+先查询内查询，返回对应的数据给 `orderNum in` 去做判断
+
+
+
+### 组合查询
+
+> 使用 UNION 操作符，可以组合多条 sql 查询
+
+```mysql
+SELECT a FROM orders WHERE a <= 5
+UNION
+SELECT A from orders WHERE a in (12,13);
+```
+
+`UNION` 将两条 sql 语句合并在一起
+
+使用条件：
+
+1. 要有多条 sql 语句
+2. 每个查询有相同的列
+3. 列数据类型要兼容
+
+
+
+### 视图
+
+> 就是 SQL 语句的封装
+
+限制：
+
+1. 唯一命名
+2. 视图不能索引、关联触发器或默认值
+
+#### 增删查
+
+```mysql
+# 创建 p1 的视图
+CREATE VIEW p1 AS select * from t2 LIMIT 5;
+# 使用
+SELECT * FROM p1;
+# 查询视图内容
+SHOW CREATE VIEW p1;
+# 删除
+DROP VIEW p1;
+```
+
+
+
+### 存储过程
+
+> 报错多条 SQL 语句的集合
+
+
+
+
+
+### 游标
+
+
+
+### 触发器
+
+
 
 
 
@@ -443,6 +520,29 @@ mysql -uroot -p xiaoman < /Users/apple/D/document/test2.sql
 ## 优化总结
 
 1. 使用如果是查询某条数据，使用 limit 1。这样到数据库找到某条数据后就回停止查询，不再继续查。
+
+   ```mysql
+   mysql> select * from t2 where h ="name50000";
+   +-----------+------+
+   | h         | c    |
+   +-----------+------+
+   | name50000 | NULL |
+   +-----------+------+
+   1 row in set (0.04 sec)
+   
+   mysql> select * from t2 where h ="name50000" limit 1;
+   +-----------+------+
+   | h         | c    |
+   +-----------+------+
+   | name50000 | NULL |
+   +-----------+------+
+   1 row in set (0.02 sec)
+   
+   10 万行数据，中间的数据加了 limit 1，快了一倍的速度
+   ```
+
+   
+
 2. char 用于定长，varchar 用于可变长，这样效率会更好
 
 

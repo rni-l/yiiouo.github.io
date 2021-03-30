@@ -4,6 +4,7 @@ title: git操作
 date: 2017-08-24 23:56:01
 tags: ["git"]
 categories: ["记录"]
+draft: true
 ---
 
 # git日常操作

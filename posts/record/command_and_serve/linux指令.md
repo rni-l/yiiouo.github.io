@@ -266,3 +266,52 @@ https://repo.mongodb.org/yum/redhat/$releasever/mongodb-org/3.4/x86_64/
 
 
 
+## 编写脚本
+
+常见用法：
+
+```shell
+# 声明变量
+test="haha"
+
+# 输出字符串变量的长度
+# 重点在 #test
+${#test}
+
+# let，let 命令可以直接进行基本算术操作，且声明的变量无需加 $
+n1=5
+n2=4
+let res=n1+n2
+echo ${res}
+
+# echo 快速生成文件；这命令会清空改文件内容，并输出对应文字
+echo "hah test" > test.txt
+# >> 会在源文件后面追加内容
+echo "hah test2" >> test.txt
+
+# 文件描述符有三种：0，1，2，分别对应输入、输出和 标准错误
+# 我们可以命令的内容输出到一个文件里面；下面的命令会把 ls 命令操作后的结果，追加到文件里面
+# 同样可以使用 0,1,2
+echo ls 1>> test.txt
+
+# tee 可以将命令输出到可视区，并生成文件；-a 是追加内容
+ls | tee test.txt
+ls | tee -a test.txt
+
+```
+
+数组
+
+```shell
+# 定义数组
+arr=(1 2 3 55)
+arr2[0]="1"
+arr2[1]="2"
+echo ${arr[2]} 
+
+# 打印全部
+echo ${arr[*]}
+# 打印长度
+echo ${#arr[*]}
+```
+

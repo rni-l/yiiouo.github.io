@@ -254,6 +254,59 @@ monogodb 默认不需要用户的，而且是没有用户的，超级管理员�
 * db.stats()：查看当前数据库信息
 * db.CN.stats()：查看当前集合的信息
 * db.serverStatus()：查看服务器状态
+* db.enableFreeMonitoring(): 开启免费的性能监控
+* db.disableFreeMonitoring()：关闭
+* db.getSiblingDB("admin").shutdownServer()：关闭服务
+
+### 查看库、集合大小
+
+```shell
+show dbs --> 查看每个库的大小
+# 切换了库后
+> db.stats(); --> 查看该库一些详细信息
+{
+	"db" : "data-collection",
+	"collections" : 11,
+	"views" : 0,
+	"objects" : 530906,
+	"avgObjSize" : 16670.245619751895,
+	"dataSize" : 8850333421,
+	"storageSize" : 3212660736,
+	"indexes" : 32,
+	"indexSize" : 16756736,
+	"totalSize" : 3229417472,
+	"scaleFactor" : 1,
+	"fsUsedSize" : 220007739392,
+	"fsTotalSize" : 250685575168,
+	"ok" : 1
+}
+# 查看某个集合的信息
+> db.behaviorerrors_copy1.stats();
+{
+	"ns" : "data-collection.behaviorerrors_copy1",
+	"size" : 4236508972,
+	"count" : 10582,
+	"avgObjSize" : 400350,
+	"storageSize" : 1294323712,
+	"freeStorageSize" : 16384,
+	"capped" : false,
+	"wiredTiger" : {},
+	"nindexes" : 4,
+	"indexBuilds" : [ ],
+	"totalIndexSize" : 561152,
+	"totalSize" : 1294884864,
+	"indexSizes" : {
+		"_id_" : 200704,
+		"applicationCode_1" : 86016,
+		"createdAt_1" : 188416,
+		"moduleCode_1" : 86016
+	},
+	"scaleFactor" : 1,
+	"ok" : 1
+}
+```
+
+
 
 ### 删除数据库
 
@@ -262,255 +315,6 @@ monogodb 默认不需要用户的，而且是没有用户的，超级管理员�
 ### 删除collection
 
 `db.CN.drop()`
-
-### 查询
-
-find(), findOne()
-
-    db.CN.find(query, projection)
-
-* query ：可选，使用查询操作符指定查询条件
-* projection ：可选，使用投影操作符指定返回的键。查询时返回文档中所有键值，只需省略该参数即可（默认省略）
-
-例子：
-
-    db.CN.find()
-    // 添加查询条件
-    db.CN.find({'_id': 2})
-    // 只显示匹配到的第一条
-    db.CN.findOne()
-    // 美化查询结果
-    db.CN.find().pretty()
-
-#### 数组查询
-
-`$elemMath` 操作符为数组元素指定复合条件，以查询数组中至少一个元素满足所有指定条件的文档
-
-    // 查询 finished 数组至少包含 一个大于 ($gt) 15 并且小于 ($lt) 20 
-    db.CN.find( { finished: { $elemMatch: { $gt: 15, $lt: 20 } } } )
-
-#### 映射字段
-
-指定显示或排除哪些字段
-
-1或true，为显示;0或false，为隐藏
-
-`_id`字段，默认显示
-
-不能在映射文档中组合 包含和排除 语句
-
-    // 显示所有字段
-    db.CN.find( { status: "A" } )
-    
-    // 只显示'_id' , status' 和 'name'
-    db.CN.find( { status: "A" }, { name: 1, status: 1 } )
-    
-    // 只显示'status'
-    db.CN.find( { status: "A" }, { status: 1, _id: 0 } )
-    
-    // 除了'favorites' 和 'points'，其他字段都显示
-    db.CN.find( { status: "A" }, { favorites: 0, points: 0 } )
-    
-    // 包含 favorites 文档中的 food 字段（排除同理）
-    db.CN.find(
-       { status: "A" },
-       { name: 1, "favorites.food": 1 }
-    )
-    // result
-    { "_id" : 3, "name" : "ahn", "favorites" : { "food" : "cake" } }
-    { "_id" : 6, "name" : "abc", "favorites" : { "food" : "pizza" } }
-    
-    // 数组，points中的bonus字段（排除同理）
-    db.CN.find( { status: "A" }, { name: 1, "points.bonus": 1 } )
-    // result
-    { "_id" : 2, "name" : "bob", "points" : [ { "bonus" : 20 }, { "bonus" : 12 } ] }
-    { "_id" : 3, "name" : "ahn", "points" : [ { "bonus" : 8 }, { "bonus" : 20 } ] }
-
-#### 模糊查询
-
-db.CN.find({name: /test/})
-
-### 插入
-
-insert() , insertOne() , insertMany()
-
-添加字段，如果没有`_id`字段的话，会自动生成
-
-`db.CN.insert(document)`
-
-#### insert
-
-    db.CN.insert({
-      title: 1,
-      name: 'name'
-    })
-
-#### insertMany
-
-    // 插入多条数据
-    db.CN.insertMany(
-       [
-         { name: "bob", age: 42, status: "A", },
-         { name: "ahn", age: 22, status: "A", },
-         { name: "xi", age: 34, status: "D", }
-       ]
-    )
-
-`insert`方法貌似都可以代替`insertOne`和`insertMany`，根据其他文章所知，`insert`在主要驱动程序已被弃用
-
-同理，update,delete,find一样    
-
-### 更新文档
-
-update, updateOne, updateMany, replaceOne, save
-
-#### update
-
-    db.CN.update(
-      <query>,
-      <update>,
-      {
-        upsert: <boolean>,
-        multi: <boolean>,
-        writeConcern: <document>
-      }
-    )
-
-#### replaceOne
-
-    // 替换'name' === 'abc'那个文档
-    db.CN.replaceOne(
-      { name: "abc" },
-      { name: "amy", age: 34, type: 2, status: "P", favorites: { "artist": "Dali", food: "donuts" } }
-    )
-
-#### save
-
-    db.CN.save({
-      _id: 1
-      title: 1,
-      name: 'name'
-    })
-
-如果不指定id，和Insert一样，指定id，就会替换对应的数据
-
-参数：
-
-* query : update的查询条件
-* update : update的对象和值
-* upsert : 可选，这个参数的意思是，如果不存在update的记录，是否插入objNew,true为插入，默认是false，不插入
-* multi : 可选，mongodb默认是false,只更新找到的第一条记录，如果这个参数为true,就把按条件查出来多条记录全部更新
-* writeConcern :可选，抛出异常的级别
-
-例子：
-
-    // 将'_id'为2的数据，'title'改为'hahahahaha'
-    // $set，可以单独处理某个字段
-    db.CN.update({'_id': 2},{$set:{'title':'hahahahaha'}})
-
-### 删除文档
-
-remove , deleteOne , deleteMany
-
-#### remove
-
-    db.CN.remove(
-      <query>,
-      {
-        justOne: <boolean>,
-        writeConcern: <document>
-      }
-    )
-
-* query :（可选）删除的文档的条件
-* justOne : （可选）如果设为 true 或 1，则只删除一个文档，默认false
-* writeConcern :（可选）抛出异常的级别
-
-例子：
-
-    db.CN.remove{
-      {'_id': 2},
-      {
-        justOne: true // 删除全部匹配的
-      }
-    }
-    // 清空数据库
-    db.CN.remove({})
-
-### 操作符
-
-* (>) 大于 - $gt
-* (<) 小于 - $lt
-* (>=) 大于等于 - $gte
-* (<= ) 小于等于 - $lte
-* (!=) 不等于 - $ne
-* (or) 或者 - $or
-* $in （在相同的字段，使用$in而不是$or）
-
-例子：
-
-    // 显示: 'likes'大于100的数据
-    db.col.find({"likes" : {$gt : 100}})
-    // 显示：'likes'大于100且小于200的数据
-    db.col.find({likes : {$lt :200, $gt : 100}})
-
-#### AND
-
-    // status === "A" && age > 30
-    db.CN.find( { status: "A", age: { $lt: 30 } } )
-
-#### OR
-
-    // status === "A" || age > 30
-    db.CN.find(
-       {
-         $or: [ { status: "A" }, { age: { $lt: 30 } } ]
-       }
-    )
-
-#### AND 和 OR 混用
-
-    // status === "A" && ( age > 30 || type === 1 )
-    db.CN.find(
-      {
-        status: "A",
-        $or: [ { age: { $lt: 30 } }, { type: 1 } ]
-      }
-    )
-
-#### $type
-
-每种数据类型的$type值
-
-* Double  1  
-* String  2  
-* Object  3  
-* Array 4  
-* Binary data 5  
-* Undefined 6 已废弃。
-* Object id 7  
-* Boolean 8  
-* Date  9  
-* Null  10   
-* Regular Expression  11   
-* JavaScript  13   
-* Symbol  14   
-* JavaScript (with scope) 15   
-* 32-bit integer  16   
-* Timestamp 17   
-* 64-bit integer  18   
-* Min key 255 Query with -1.
-* Max key 127
-
-    // 获取到'title'是字符串的数据
-    db.CN.find({"title" : {$type : 2}})
-
-### $set
-
-    // 只修改某个字段
-    db.CN.update(id: 1, { $set: { name: '123' } })
-
-
 
 ### 查询耗时
 
@@ -651,6 +455,54 @@ schema.pre('save', async function() {
 ```
 
 然后使用 `schema.pre` 的钩子，在有修改的操作的钩子里，对 `updatedAt` 进行更新
+
+
+
+### 如何清空一个集合
+
+```shell
+# 删除该集合内的所有文档
+db.behaviorerrors_copy1.remove({})
+
+# 删除后，用 db.dd.stats() 查看信息
+# 发下索引没清楚，totalSize 还是很大
+db.behaviorerrors_copy1.stats();
+{
+	"ns" : "data-collection.behaviorerrors_copy1",
+	"size" : 0,
+	"count" : 0,
+	"storageSize" : 336551936,
+	"freeStorageSize" : 336543744,
+	"totalIndexSize" : 561152,
+	"totalSize" : 336551936,
+	"indexSizes" : {
+		"_id_" : 200704,
+		"applicationCode_1" : 86016,
+		"createdAt_1" : 188416,
+		"moduleCode_1" : 86016
+	},
+}
+
+# 删除集合的索引
+# 删除后，还是有占用空间，但这是正常的，因为该集合有 4 个索引建，所有这些空间就是被这几个索引使用了
+db.behaviorerrors_copy1.reIndex();
+{
+  "totalIndexSize" : 32768,
+	"totalSize" : 45056,
+	"indexSizes" : {
+		"_id_" : 8192,
+		"applicationCode_1" : 8192,
+		"createdAt_1" : 8192,
+		"moduleCode_1" : 8192
+	},
+}
+
+```
+
+简单来说要清空一个集合的方法有两个：
+
+1. 直接 .drop 集合，然后再新建一个
+2. .remove({}) + .reIndex() 进行清空操作
 
 
 

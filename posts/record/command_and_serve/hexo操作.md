@@ -3,6 +3,7 @@ title: hexo操作
 date: 2017-08-02 11:42:13
 tags: ["hexo"]
 categories: ["记录"]
+draft: true
 ---
 
 > 记录平常常用的hexo操作

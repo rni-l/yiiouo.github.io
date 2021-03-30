@@ -3,6 +3,7 @@ title: ajax
 date: 2017-06-27 00:00:00
 tags: ["js", "ajax"]
 categories: ["记录"]
+draft: true
 ---
 # ajax 总结
 

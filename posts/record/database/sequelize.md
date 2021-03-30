@@ -3,6 +3,7 @@ title: sequelize
 date: 2020-10-10 15:07:00
 tags: ["sequelize", "mysql"]
 categories: ["记录"]
+draft: true
 ---
 
 > 以下使用，基于 EggJs 和 TypeScript
